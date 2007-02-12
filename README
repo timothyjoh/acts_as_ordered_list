@@ -105,6 +105,9 @@
 
                 destroy_and_parent_adopts_children
 
+= Install
+
+  ./script/plugin install svn://rubyforge.org/var/svn/ordered-tree/acts_as_ordered_tree
 
 = License
 
