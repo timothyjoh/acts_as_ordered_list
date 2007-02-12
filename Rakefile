@@ -1,5 +1,6 @@
 require 'rake'
 require 'rake/testtask'
+require 'rake/clean'
 require 'rake/rdoctask'
 
 desc 'Default: run acts_as_ordered_tree unit tests.'
