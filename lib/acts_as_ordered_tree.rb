@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.0.2
+# Acts As Ordered Tree v.0.3
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -44,7 +44,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   end
         #
         def acts_as_ordered_tree(options = {})
-          # TODO: add counter_cache option
+          # TODO: add counter_cache option?
           configuration = { :foreign_key   => :parent_id ,
                             :order         => :position  }
           configuration.update(options) if options.is_a?(Hash)
@@ -283,7 +283,6 @@ module WizardActsAsOrderedTree #:nodoc:
         ## Destroy Methods
 
         # sends immediate children to the 'roots' list, then destroy's self
-        #   i.e. self.orphan_children && self.destroy
         def destroy_and_orphan_children
           self.class.transaction do
             orphan_children
@@ -292,7 +291,6 @@ module WizardActsAsOrderedTree #:nodoc:
         end
 
         # hands immediate children of to it's parent, then destroy's self
-        #   i.e. self.parent_adopts_children && self.destroy
         def destroy_and_parent_adopts_children
           self.class.transaction do
             parent_adopts_children
@@ -395,7 +393,7 @@ module WizardActsAsOrderedTree #:nodoc:
               #
               # Note: to shift to another parent AND specify a position, use shift_to()
               # i.e. don't assign the object a new position, then new_parent << obj
-              # this will end up at the bottom of the list.
+              # this will end up at the bottom of the list. I may fix this.
               #
               if !self_and_syblings(true).include?(self)
                 add_to_list_bottom
