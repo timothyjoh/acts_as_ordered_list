@@ -1,30 +1,30 @@
 = ActsAsOrderedTree
-  v.0.3
+  v.0.4
                                   +----+-----------+----------+---------+
   node[0]                         | id | parent_id | position | node    |
     \_ node[1]                    +----+-----------+----------+---------+
-    \_ node[2]                    |  1 |      NULL |        1 | Node_0  |
-    |    \_ node[3]               |  2 |         1 |        1 | Node_1  |
-    |    \_ node[4]               |  3 |         1 |        2 | Node_2  |
-    |    |   \_ node[7]           |  4 |         3 |        1 | Node_3  |
-    |    |   \_ node[8]           |  5 |         3 |        2 | Node_4  |
-    |    \_ node[9]               |  6 |         1 |        3 | Node_5  |
-    |    \_ node[10]              |  7 |         1 |        4 | Node_6  |
-    \_ node[5]                    |  8 |         5 |        1 | Node_7  |
-    \_ node[6]                    |  9 |         5 |        2 | Node_8  |
-    |                             | 10 |         3 |        3 | Node_9  |
-    |                             | 11 |         3 |        4 | Node_10 |
-  node[11]                        | 12 |      NULL |        2 | Node_11 |
-    \_ node[12]                   | 13 |        12 |        1 | Node_12 |
-    \_ node[13]                   | 14 |        12 |        2 | Node_13 |
-    |    \_ node[14]              | 15 |        14 |        1 | Node_14 |
-    |    \_ node[15]              | 16 |        14 |        2 | Node_15 |
-    |    |   \_ node[18]          | 17 |        12 |        3 | Node_16 |
-    |    |   \_ node[19]          | 18 |        12 |        4 | Node_17 |
-    |    \_ node[20]              | 19 |        16 |        1 | Node_18 |
-    |    \_ node[21]              | 20 |        16 |        2 | Node_19 |
-    \_ node[16]                   | 21 |        14 |        3 | Node_20 |
-    \_ node[17]                   | 22 |        14 |        4 | Node_21 |
+    \_ node[2]                    |  1 |         0 |        1 | Node_1  |
+    |    \_ node[3]               |  2 |         1 |        1 | Node_2  |
+    |    \_ node[4]               |  3 |         1 |        2 | Node_3  |
+    |    |   \_ node[7]           |  4 |         3 |        1 | Node_4  |
+    |    |   \_ node[8]           |  5 |         3 |        2 | Node_5  |
+    |    \_ node[9]               |  6 |         1 |        3 | Node_6  |
+    |    \_ node[10]              |  7 |         1 |        4 | Node_7  |
+    \_ node[5]                    |  8 |         5 |        1 | Node_8  |
+    \_ node[6]                    |  9 |         5 |        2 | Node_9  |
+    |                             | 10 |         3 |        3 | Node_10 |
+    |                             | 11 |         3 |        4 | Node_11 |
+  node[11]                        | 12 |         0 |        2 | Node_12 |
+    \_ node[12]                   | 13 |        12 |        1 | Node_13 |
+    \_ node[13]                   | 14 |        12 |        2 | Node_14 |
+    |    \_ node[14]              | 15 |        14 |        1 | Node_15 |
+    |    \_ node[15]              | 16 |        14 |        2 | Node_16 |
+    |    |   \_ node[18]          | 17 |        12 |        3 | Node_17 |
+    |    |   \_ node[19]          | 18 |        12 |        4 | Node_18 |
+    |    \_ node[20]              | 19 |        16 |        1 | Node_19 |
+    |    \_ node[21]              | 20 |        16 |        2 | Node_20 |
+    \_ node[16]                   | 21 |        14 |        3 | Node_21 |
+    \_ node[17]                   | 22 |        14 |        4 | Node_22 |
                                   +----+-----------+----------+---------+
 
 
@@ -36,7 +36,7 @@
   class CreatePeople < ActiveRecord::Migration
     def self.up
       create_table :people do |t|
-        t.column :parent_id ,:integer
+        t.column :parent_id ,:integer ,:default => 0 ,:null => false
         t.column :position  ,:integer
       end
       add_index(:people, :parent_id)
@@ -71,7 +71,7 @@
                   Person.create(:position => 2)
 
                 :position will default to the bottom of the parent's list
-                :parent_id defaults to NULL (Class.roots)
+                :parent_id defaults to 0 (Class.roots)
 
      Read
                 roots (class method)                        self_and_syblings

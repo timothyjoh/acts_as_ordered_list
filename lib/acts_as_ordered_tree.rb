@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.0.3
+# Acts As Ordered Tree v.0.4
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -36,7 +36,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   class CreatePeople < ActiveRecord::Migration
         #     def self.up
         #       create_table :people do |t|
-        #         t.column :parent_id ,:integer
+        #         t.column :parent_id ,:integer ,:default => 0 ,:null => false
         #         t.column :position  ,:integer
         #       end
         #       add_index(:people, :parent_id)
@@ -70,10 +70,10 @@ module WizardActsAsOrderedTree #:nodoc:
             end
 
             # returns an ordered array of all nodes without a parent
-            #   think of their parent as being the tree trunk
+            #   i.e. parent_id = 0
             def self.roots(reload = false)
               reload = true if !@roots
-              reload ? find(:all, :conditions => "#{configuration[:foreign_key]} IS NULL", :order => "#{configuration[:order]}") : @roots
+              reload ? find(:all, :conditions => "#{configuration[:foreign_key]} = 0", :order => "#{configuration[:order]}") : @roots
             end
 
             before_update  :check_list_changes
@@ -187,7 +187,7 @@ module WizardActsAsOrderedTree #:nodoc:
         def shift_to(new_parent = nil, new_sybling = nil)
           if new_parent
             ok = new_parent.children(true) << self
-          else # shifting to roots
+          else
             ok = orphan_self
           end
           if ok && new_sybling
@@ -199,7 +199,7 @@ module WizardActsAsOrderedTree #:nodoc:
         # orphans the node (sends it to the roots list)
         #   (descendants follow)
         def orphan_self
-          self[foreign_key_column] = nil
+          self[foreign_key_column] = 0
           self.update
         end
 
@@ -330,14 +330,14 @@ module WizardActsAsOrderedTree #:nodoc:
           end
 
           def add_to_list_bottom
-            self[order_column] = self_and_syblings.size + 1
+            self[order_column] = self_and_syblings(true).size + 1
           end
 
           def move_to(new_position, on_create = false)
             if parent(true)
               scope = "#{foreign_key_column} = #{parent.id}"
             else
-              scope = "#{foreign_key_column} IS NULL"
+              scope = "#{foreign_key_column} = 0"
             end
             if new_position < position_in_list
               # moving from lower to higher, increment all in between
