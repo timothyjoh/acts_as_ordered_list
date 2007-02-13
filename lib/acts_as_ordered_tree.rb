@@ -80,9 +80,9 @@ module WizardActsAsOrderedTree #:nodoc:
               reload ? find(:all, :conditions => "#{configuration[:foreign_key]} = 0", :order => "#{configuration[:order]}") : @@roots
             end
 
+            before_create  :add_to_list
             before_update  :check_list_changes
             after_update   :reorder_old_list
-            before_create  :add_to_list
             before_destroy :destroy_descendants
             after_destroy  :remove_from_list
           EOV
