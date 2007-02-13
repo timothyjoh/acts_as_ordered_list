@@ -29,8 +29,9 @@ module WizardActsAsOrderedTree #:nodoc:
         # Configuration:
         #
         #   class Person < ActiveRecord::Base
-        #     acts_as_ordered_tree :foreign_key => :parent_id,
-        #                          :order       => :position
+        #     acts_as_ordered_tree :foreign_key   => :parent_id,
+        #                          :order         => :position,
+        #                          :counter_cache => nil
         #   end
         #
         #   class CreatePeople < ActiveRecord::Migration
@@ -38,15 +39,18 @@ module WizardActsAsOrderedTree #:nodoc:
         #       create_table :people do |t|
         #         t.column :parent_id ,:integer ,:default => 0 ,:null => false
         #         t.column :position  ,:integer
+        #         # NOTE: If using counter_cache, use column name: child_nodes_count
+        #         # t.column :child_nodes_count ,:integer
         #       end
         #       add_index(:people, :parent_id)
         #     end
         #   end
         #
+        #
         def acts_as_ordered_tree(options = {})
-          # TODO: add counter_cache option?
           configuration = { :foreign_key   => :parent_id ,
-                            :order         => :position  }
+                            :order         => :position  ,
+                            :counter_cache => nil        }
           configuration.update(options) if options.is_a?(Hash)
 
           belongs_to :parent_node,
@@ -58,22 +62,22 @@ module WizardActsAsOrderedTree #:nodoc:
                      :foreign_key   => configuration[:foreign_key],
                      :order         => configuration[:order]
 
+          cattr_reader :roots
+
           class_eval <<-EOV
             include WizardActsAsOrderedTree::Acts::OrderedTree::InstanceMethods
 
             def foreign_key_column
-              '#{configuration[:foreign_key]}'
+              '#{configuration[:foreign_key]}'.to_sym
             end
 
             def order_column
-              '#{configuration[:order]}'
+              '#{configuration[:order]}'.to_sym
             end
 
-            # returns an ordered array of all nodes without a parent
-            #   i.e. parent_id = 0
             def self.roots(reload = false)
-              reload = true if !@roots
-              reload ? find(:all, :conditions => "#{configuration[:foreign_key]} = 0", :order => "#{configuration[:order]}") : @roots
+              reload = true if !@@roots
+              reload ? find(:all, :conditions => "#{configuration[:foreign_key]} = 0", :order => "#{configuration[:order]}") : @@roots
             end
 
             before_update  :check_list_changes
@@ -88,9 +92,18 @@ module WizardActsAsOrderedTree #:nodoc:
       module InstanceMethods
         ## Tree Read Methods
 
-        # returns the top node in the object's tree
+        # returns an ordered array of all nodes without a parent
+        #   i.e. parent_id = 0
         #
         #   return is cached
+        #   use self.class.roots(true) to force a reload
+        def self.roots(reload = false)
+          # stub for rdoc - overwritten in AddActsAsMethod::acts_as_ordered_tree
+        end
+
+        # returns the top node in the object's tree
+        #
+        #   return is cached, unless nil
         #   use root(true) to force a reload
         def root(reload = false)
           reload = true if !@root
@@ -109,7 +122,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   auto-loads itself on first access
         #   instead of getting "<parent_node not loaded yet>"
         #
-        #   return is cached
+        #   return is cached, unless nil
         #   use parent(true) to force a reload
         def parent(reload=false)
           reload = true if !@parent
@@ -270,14 +283,14 @@ module WizardActsAsOrderedTree #:nodoc:
 
         # swap with the node below self
         def move_down
-          return if self == self_and_syblings.last
+          return if self == self_and_syblings(true).last
           move_to(position_in_list + 1)
         end
 
         # move to the bottom of the list
         def move_to_bottom
-          return if self == self_and_syblings.last
-          move_to(self_and_syblings(true).last.position_in_list)
+          return if self == self_and_syblings(true).last
+          move_to(self_and_syblings.last.position_in_list)
         end
 
         ## Destroy Methods
@@ -301,18 +314,18 @@ module WizardActsAsOrderedTree #:nodoc:
         private
           def find_root
             node = self
-            node = node.parent while node.parent
+            node = node.parent while node.parent(true)
             node
           end
 
           # TODO: add ceiling option?
           def find_ancestors
             node, nodes = self, []
-            nodes << node = node.parent while node.parent
+            nodes << node = node.parent while node.parent(true)
             nodes
           end
 
-          # TODO: add depth option?
+          # TODO: add depth option? or limit
           # recursive method
           def find_descendants(node)
             @descendants ||= []
@@ -324,12 +337,14 @@ module WizardActsAsOrderedTree #:nodoc:
           end
 
           def add_to_list
+            # TODO: use counter_cache if available, and self.parent
             new_position = position_in_list if (1..self_and_syblings(true).size).include?(position_in_list.to_i)
             add_to_list_bottom
             move_to(new_position, true) if new_position
           end
 
           def add_to_list_bottom
+            # TODO: use counter_cache if available, and self.parent
             self[order_column] = self_and_syblings(true).size + 1
           end
 
