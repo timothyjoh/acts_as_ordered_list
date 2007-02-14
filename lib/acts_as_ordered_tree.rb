@@ -197,7 +197,7 @@ module WizardActsAsOrderedTree #:nodoc:
           if new_parent
             ok = new_parent.children(true) << self
           else
-            ok = orphan_self
+            ok = orphan
           end
           if ok && new_sybling
             ok = move_above(new_sybling) if self_and_syblings(true).include?(new_sybling)
@@ -207,7 +207,7 @@ module WizardActsAsOrderedTree #:nodoc:
 
         # orphans the node (sends it to the roots list)
         #   (descendants follow)
-        def orphan_self
+        def orphan
           self[foreign_key_column] = 0
           self.update
         end
@@ -216,7 +216,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   sends all immediate children to the 'roots' list
         def orphan_children
           self.class.transaction do
-            children(true).each{|child| child.orphan_self}
+            children(true).each{|child| child.orphan}
           end
         end
 
@@ -236,7 +236,7 @@ module WizardActsAsOrderedTree #:nodoc:
         def orphan_self_and_children
           self.class.transaction do
             orphan_children
-            orphan_self
+            orphan
           end
         end
 
@@ -244,7 +244,7 @@ module WizardActsAsOrderedTree #:nodoc:
         def orphan_self_and_parent_adopts_children
           self.class.transaction do
             parent_adopts_children
-            orphan_self
+            orphan
           end
         end
 

@@ -196,10 +196,10 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     assert_equal 5, people[4].position_in_list
   end
 
-  def test_shift_to_roots_without_position__ie__orphan_self
+  def test_shift_to_roots_without_position__ie__orphan
     reload_test_tree
     people = Person.find(:all)
-    assert people[4].orphan_self
+    assert people[4].orphan
     people = Person.find(:all)
     assert_equal [people[3],people[9],people[10]], people[2].children
     assert_equal 1, people[3].position_in_list

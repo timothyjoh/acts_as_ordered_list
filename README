@@ -89,7 +89,7 @@
      Update
                 shift_to(parent = nil, position = nil)      move_above(sybling = nil)
 
-                orphan_self                                 move_up
+                orphan                                      move_up
 
                 orphan_children                             move_down
 
