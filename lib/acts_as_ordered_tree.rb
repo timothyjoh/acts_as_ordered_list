@@ -30,8 +30,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #
         #   class Person < ActiveRecord::Base
         #     acts_as_ordered_tree :foreign_key   => :parent_id,
-        #                          :order         => :position,
-        #                          :counter_cache => nil
+        #                          :order         => :position
         #   end
         #
         #   class CreatePeople < ActiveRecord::Migration
@@ -39,8 +38,6 @@ module WizardActsAsOrderedTree #:nodoc:
         #       create_table :people do |t|
         #         t.column :parent_id ,:integer ,:default => 0 ,:null => false
         #         t.column :position  ,:integer
-        #         # NOTE: If using counter_cache, use column name: child_nodes_count
-        #         # t.column :child_nodes_count ,:integer
         #       end
         #       add_index(:people, :parent_id)
         #     end
@@ -49,8 +46,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #
         def acts_as_ordered_tree(options = {})
           configuration = { :foreign_key   => :parent_id ,
-                            :order         => :position  ,
-                            :counter_cache => nil        }
+                            :order         => :position  }
           configuration.update(options) if options.is_a?(Hash)
 
           belongs_to :parent_node,
@@ -337,14 +333,12 @@ module WizardActsAsOrderedTree #:nodoc:
           end
 
           def add_to_list
-            # TODO: use counter_cache if available, and self.parent
             new_position = position_in_list if (1..self_and_syblings(true).size).include?(position_in_list.to_i)
             add_to_list_bottom
             move_to(new_position, true) if new_position
           end
 
           def add_to_list_bottom
-            # TODO: use counter_cache if available, and self.parent
             self[order_column] = self_and_syblings(true).size + 1
           end
 
