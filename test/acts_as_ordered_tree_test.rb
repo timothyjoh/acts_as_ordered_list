@@ -321,6 +321,11 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     assert_equal 1, people[0].position_in_list
     assert_equal 2 ,people[25].position_in_list
     assert_equal 3 ,people[11].position_in_list
+    # invalid positions go to bottom of the list
+    node_26 = people[2].children.create(:position => 15, :name => 'Node_26')
+    assert_equal 8, node_26.position_in_list
+    node_27 = Person.create(:position => 15, :name => 'Node_27')
+    assert_equal 4, node_27.position_in_list
   end
 
 private
