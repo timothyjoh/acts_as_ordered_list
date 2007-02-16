@@ -36,7 +36,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   class CreatePeople < ActiveRecord::Migration
         #     def self.up
         #       create_table :people do |t|
-        #         t.column :parent_id ,:integer ,:default => 0 ,:null => false
+        #         t.column :parent_id ,:integer ,:null => false ,:default => 0
         #         t.column :position  ,:integer
         #       end
         #       add_index(:people, :parent_id)
