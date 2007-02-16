@@ -89,13 +89,13 @@
      Update
                 shift_to(parent = nil, position = nil)      move_above(sybling = nil)
 
-                orphan                                      move_up
+                orphan                                      move_higher
 
-                orphan_children                             move_down
-
-                orphan_self_and_children                    move_to_bottom
+                orphan_children                             move_lower
 
                 parent_adopts_children                      move_to_top
+
+                orphan_self_and_children                    move_to_bottom
 
                 orphan_self_and_parent_adopts_children
 

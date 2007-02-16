@@ -98,19 +98,19 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     assert_equal 1, people[11].position_in_list
   end
 
-  def test_move_up
+  def test_move_higher
     reload_test_tree
     people = Person.find(:all)
-    assert people[9].move_up
+    assert people[9].move_higher
     assert_equal 2, people[9].position_in_list
     people[4].reload
     assert_equal 3, people[4].position_in_list
   end
 
-  def test_move_down
+  def test_move_lower
     reload_test_tree
     people = Person.find(:all)
-    assert people[4].move_down
+    assert people[4].move_lower
     assert_equal 3, people[4].position_in_list
     people[9].reload
     assert_equal 2, people[9].position_in_list

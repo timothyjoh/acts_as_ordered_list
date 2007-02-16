@@ -116,7 +116,7 @@ module WizardActsAsOrderedTree #:nodoc:
 
         # returns object's parent in the tree
         #   auto-loads itself on first access
-        #   instead of getting "<parent_node not loaded yet>"
+        #   instead of returning "<parent_node not loaded yet>"
         #
         #   return is cached, unless nil
         #   use parent(true) to force a reload
@@ -127,7 +127,7 @@ module WizardActsAsOrderedTree #:nodoc:
 
         # returns an array of the object's immediate children
         #   auto-loads itself on first access
-        #   instead of "<child_nodes not loaded yet>"
+        #   instead of returning "<child_nodes not loaded yet>"
         #
         #   return is cached
         #   use children(true) to force a reload
@@ -272,13 +272,13 @@ module WizardActsAsOrderedTree #:nodoc:
         end
 
         # swap with the node above self
-        def move_up
+        def move_higher
           return if position_in_list == 1
           move_to(position_in_list - 1)
         end
 
         # swap with the node below self
-        def move_down
+        def move_lower
           return if self == self_and_syblings(true).last
           move_to(position_in_list + 1)
         end
@@ -398,7 +398,7 @@ module WizardActsAsOrderedTree #:nodoc:
             end
 
             def check_list_changes #:nodoc:
-              # before_validation_on_update callback
+              # before_update callback
               #
               # Note: to shift to another parent AND specify a position, use shift_to()
               # i.e. don't assign the object a new position, then new_parent << obj
@@ -411,7 +411,7 @@ module WizardActsAsOrderedTree #:nodoc:
               end
             end
 
-            def validate #:nodoc:
+            def validate_on_update #:nodoc:
               if !self_and_syblings(true).include?(self)
                 if self.parent == self
                   errors.add_to_base("cannot be a parent to itself.")
