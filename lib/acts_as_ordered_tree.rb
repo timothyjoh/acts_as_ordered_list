@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.0.5
+# Acts As Ordered Tree v.1.0
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -168,7 +168,7 @@ module WizardActsAsOrderedTree #:nodoc:
         #   the list will either be parent.children,
         #   or self.class.roots
         #
-        # i.e. self.position
+        #   i.e. self.position
         def position_in_list
           self[order_column]
         end
@@ -314,14 +314,12 @@ module WizardActsAsOrderedTree #:nodoc:
             node
           end
 
-          # TODO: add ceiling option?
           def find_ancestors
             node, nodes = self, []
             nodes << node = node.parent while node.parent(true)
             nodes
           end
 
-          # TODO: add depth option? or limit
           # recursive method
           def find_descendants(node)
             @descendants ||= []
@@ -402,7 +400,7 @@ module WizardActsAsOrderedTree #:nodoc:
               #
               # Note: to shift to another parent AND specify a position, use shift_to()
               # i.e. don't assign the object a new position, then new_parent << obj
-              # this will end up at the bottom of the list. I may fix this.
+              # this will end up at the bottom of the list.
               #
               if !self_and_syblings(true).include?(self)
                 add_to_list_bottom

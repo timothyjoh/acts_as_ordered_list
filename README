@@ -1,5 +1,5 @@
 = ActsAsOrderedTree
-  v.0.5
+  v.1.0
                                  +----+-----------+----------+---------+
   node_1                         | id | parent_id | position | node    |
     \_ node_2                    +----+-----------+----------+---------+
@@ -111,6 +111,8 @@
   ./script/plugin install svn://rubyforge.org/var/svn/ordered-tree/acts_as_ordered_tree
 
   To test, cd /vendor/plugins/acts_as_ordered_tree and run 'rake'.
+
+  There is a drag-n-drop demo located at svn://rubyforge.org/var/svn/ordered-tree/demo
 
 = License
 
