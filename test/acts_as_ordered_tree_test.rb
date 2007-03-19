@@ -52,11 +52,9 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
   def test_destroy_descendants
     reload_test_tree
     people = Person.find(:all)
-    total = people.size
     assert_equal 7, people[2].descendants.size + 1
     assert people[2].destroy
-    people = Person.find(:all)
-    assert ((total - 7) == people.size)
+    assert_equal (people.size - 7), Person.find(:all).size
   end
 
   def test_ancestors_and_roots
