@@ -7,34 +7,37 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     people = Person.find(:all)
     # people[0] is gaining a new parent
     assert !(people[4].children << people[0]),"
-      Validation failed!
-      If you are using the 'validate' callback, make sure you use 'super'\n"
+      Validation failed:
+      If you are using the 'validate_on_update' callback, make sure you use 'super'\n"
     assert_equal "is an ancestor of the new parent.", people[0].errors[:base]
 
     # people[2] is changing parents
     assert !(people[7].children << people[2])
     assert_equal "is an ancestor of the new parent.", people[0].errors[:base]
 
+    assert !(people[3].children << people[3])
+    assert_equal "cannot be a parent to itself.", people[3].errors[:base]
+
     # remember that the failed operations leave you with tainted objects
     assert people[2].parent == people[7]
     people[2].reload
     people[0].reload
+    assert people[2].parent != people[7]
+  end
 
-    # caching
-    temp = people[2].descendants
+  def test_validate_on_update_reloads_descendants
+    reload_test_tree
+    people = Person.find(:all)
+    # caching (descendants must be reloaded in validate_on_update)
+    people[2].descendants # load descendants
     assert people[5].children << people[7]
-    assert people[5].children(true).include?(people[7])
+    assert people[5].children.include?(people[7])
     # since people[2].descendants has already been loaded above,
     # it still includes people[7] as a descendant
     assert people[2].descendants.include?(people[7])
-    # so, without the reload on people[2].descendants
-    # in the validation, the following would fail
-    assert people[7].children << people[2]
-    # you must reload the array to get accurate info
-    assert !people[2].descendants(true).include?(people[7])
-
-    assert !(people[3].children << people[3])
-    assert_equal "cannot be a parent to itself.", people[3].errors[:base]
+    # so, without the reload on people[2].descendants in validate_on_update,
+    # the following would fail
+    assert people[7].children << people[2], 'Validation Failed: descendants must be reloaded in validate_on_update'
   end
 
   def test_descendants
@@ -50,10 +53,10 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     reload_test_tree
     people = Person.find(:all)
     total = people.size
-    to_remove = people[2].descendants.size + 1
+    assert_equal 7, people[2].descendants.size + 1
     assert people[2].destroy
     people = Person.find(:all)
-    assert ((total - to_remove) == people.size)
+    assert ((total - 7) == people.size)
   end
 
   def test_ancestors_and_roots
