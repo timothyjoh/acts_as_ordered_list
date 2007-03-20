@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.1.0
+# Acts As Ordered Tree v.1.1
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -80,7 +80,7 @@ module WizardActsAsOrderedTree #:nodoc:
             before_update  :check_list_changes
             after_update   :reorder_old_list
             before_destroy :destroy_descendants
-            after_destroy  :remove_from_list
+            after_destroy  :reorder_old_list
           EOV
         end #acts_as_ordered_tree
       end #module AddActsAsMethod
@@ -392,6 +392,8 @@ module WizardActsAsOrderedTree #:nodoc:
           protected
             def destroy_descendants #:nodoc:
               # before_destroy callback (recursive)
+              @old_parent = self.class.find(self).parent
+              @old_parent ||= 'root'
               self.children(true).each{|child| child.destroy}
             end
 
@@ -420,19 +422,13 @@ module WizardActsAsOrderedTree #:nodoc:
             end
 
             def reorder_old_list #:nodoc:
-              # after_update callback
-              # if our parent changed, re-order the old list
+              # after_update and after_destroy callback
+              # re-order the old parent's list
               if @old_parent == 'root'
                 reorder_roots
               elsif @old_parent
                 @old_parent.reorder_children
               end
-            end
-
-            def remove_from_list #:nodoc:
-              # after_destroy callback
-              # re-order the list we were removed from
-              parent ? parent.reorder_children : reorder_roots
             end
 
           #protected

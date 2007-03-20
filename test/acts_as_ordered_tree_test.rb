@@ -65,13 +65,17 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     assert people[7].class.roots == [people[0],people[11]]
   end
 
-  def test_remove_and_reorder_list
+  def test_destroy_and_reorder_list
     reload_test_tree
     people = Person.find(:all)
     assert_equal [people[1],people[2],people[3],people[4],people[7],people[8],people[9],people[10],people[5],people[6]], people[0].descendants
     assert_equal [people[1],people[2],people[5],people[6]], people[5].self_and_syblings
     assert_equal 3, people[5].position_in_list
+    # taint people[2].parent (since the plugin protects against this)
+    people[10].children << people[2]
+    assert_equal people[10], people[2].parent
     assert people[2].destroy
+    assert_equal (people.size - 7), Person.find(:all).size
     # Note that I don't need to reload self_and_syblings or children in this case,
     # since the re-ordering action is actually happening against people[0].children
     # (which is what self_and_syblings returns)
