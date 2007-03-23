@@ -392,8 +392,7 @@ module WizardActsAsOrderedTree #:nodoc:
           protected
             def destroy_descendants #:nodoc:
               # before_destroy callback (recursive)
-              @old_parent = self.class.find(self).parent
-              @old_parent ||= 'root'
+              @old_parent = self.class.find(self).parent || 'root'
               self.children(true).each{|child| child.destroy}
             end
 
@@ -406,8 +405,7 @@ module WizardActsAsOrderedTree #:nodoc:
               #
               if !self_and_syblings(true).include?(self)
                 add_to_list_bottom
-                @old_parent = self.class.find(self).parent
-                @old_parent ||= 'root'
+                @old_parent = self.class.find(self).parent || 'root'
               end
             end
 
