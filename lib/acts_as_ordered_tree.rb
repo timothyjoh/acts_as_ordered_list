@@ -64,11 +64,11 @@ module WizardActsAsOrderedTree #:nodoc:
             include WizardActsAsOrderedTree::Acts::OrderedTree::InstanceMethods
 
             def foreign_key_column
-              '#{configuration[:foreign_key]}'.to_sym
+              :'#{configuration[:foreign_key]}'
             end
 
             def order_column
-              '#{configuration[:order]}'.to_sym
+              :'#{configuration[:order]}'
             end
 
             def self.roots(reload = false)
