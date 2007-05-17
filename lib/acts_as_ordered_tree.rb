@@ -337,7 +337,7 @@ module WizardActsAsOrderedTree #:nodoc:
           end
 
           def add_to_list_bottom
-            self[order_column] = self_and_siblings(true).size + 1
+            self[order_column] = self_and_siblings.size + 1
           end
 
           def move_to(new_position, on_create = false)
