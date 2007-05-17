@@ -11,7 +11,7 @@ class ActsAsOrderedTree2Test < Test::Unit::TestCase
   def test_create_with_position_method_1
     people = reload_test_tree
     # method 1
-    assert people[2].children << Person.new(:position => 3, :name => 'Person_22')
+    assert people[2].children << Person.new(:position => 3, :name => 'Person_23')
     people = Person.find(:all)
     assert_equal [people[3],people[4],people[22],people[9],people[10]], people[2].children
     assert_equal 1, people[3].position_in_list
@@ -24,7 +24,7 @@ class ActsAsOrderedTree2Test < Test::Unit::TestCase
   def test_create_with_position_method_2
     people = reload_test_tree
     # method 2
-    assert Person.create(:parent_id => people[2].id, :position => 2, :name => 'Person_22')
+    assert Person.create(:parent_id => people[2].id, :position => 2, :name => 'Person_23')
     people = Person.find(:all)
     assert_equal [people[3],people[22],people[4],people[9],people[10]], people[2].children
     assert_equal 1, people[3].position_in_list
@@ -37,7 +37,7 @@ class ActsAsOrderedTree2Test < Test::Unit::TestCase
   def test_create_with_position_method_3
     people = reload_test_tree
     # method 3
-    assert people[2].children.create(:position => 4, :name => 'Person_22')
+    assert people[2].children.create(:position => 4, :name => 'Person_23')
     people = Person.find(:all)
     assert_equal [people[3],people[4],people[9],people[22],people[10]], people[2].children
     assert_equal 1, people[3].position_in_list
@@ -50,7 +50,7 @@ class ActsAsOrderedTree2Test < Test::Unit::TestCase
   def test_create_with_position_method_4
     people = reload_test_tree
     # method 4 (new 'root')
-    assert Person.create(:position => 2, :name => 'Person_22')
+    assert Person.create(:position => 2, :name => 'Person_23')
     people = Person.find(:all)
     assert_equal [people[0],people[22],people[11]], Person.roots
     assert_equal 1, people[0].position_in_list
@@ -61,8 +61,8 @@ class ActsAsOrderedTree2Test < Test::Unit::TestCase
   def test_create_with_invalid_position
     # invalid positions go to bottom of the list
     people = reload_test_tree
-    person_22 = people[2].children.create(:position => 15, :name => 'Person_22')
-    assert_equal 5, person_22.position_in_list
+    person_23 = people[2].children.create(:position => 15, :name => 'Person_23')
+    assert_equal 5, person_23.position_in_list
   end
 
 private
