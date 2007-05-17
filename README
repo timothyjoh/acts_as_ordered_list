@@ -1,5 +1,5 @@
 = ActsAsOrderedTree
-  v.1.1
+  v.1.1.1
                                  +----+-----------+----------+---------+
   node_1                         | id | parent_id | position | node    |
     \_ node_2                    +----+-----------+----------+---------+
@@ -74,9 +74,9 @@
                 :parent_id defaults to 0 (Class.roots)
 
      Read
-                roots (class method)                        self_and_syblings
+                roots (class method)                        self_and_siblings
 
-                root                                        syblings
+                root                                        siblings
 
                 parent                                      position_in_list
 
@@ -84,10 +84,10 @@
 
                 children
 
-                decendants
+                descendants
 
      Update
-                shift_to(parent = nil, position = nil)      move_above(sybling = nil)
+                shift_to(parent = nil, position = nil)      move_above(sibling = nil)
 
                 orphan                                      move_higher
 
@@ -102,7 +102,7 @@
      Destroy
                 destroy (deletes all descendants)
 
-                destory_and_orphan_children
+                destroy_and_orphan_children
 
                 destroy_and_parent_adopts_children
 
@@ -110,7 +110,7 @@
 
   ./script/plugin install svn://rubyforge.org/var/svn/ordered-tree/acts_as_ordered_tree
 
-  To test, run 'rake test:plugins'.
+  To test, run 'rake test:plugins', or 'rake' from the plugin's directory.
 
   There is a drag-n-drop demo located at svn://rubyforge.org/var/svn/ordered-tree/demo
 

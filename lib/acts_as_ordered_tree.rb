@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.1.1
+# Acts As Ordered Tree v.1.1.1
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
@@ -148,20 +148,20 @@ module WizardActsAsOrderedTree #:nodoc:
 
         ## List Read Methods
 
-        # returns an array of the object's syblings, including itself
+        # returns an array of the object's siblings, including itself
         #
         #   return is cached
-        #   use self_and_syblings(true) to force a reload
-        def self_and_syblings(reload = false)
+        #   use self_and_siblings(true) to force a reload
+        def self_and_siblings(reload = false)
           parent(reload) ? parent.children(reload) : self.class.roots(reload)
         end
 
-        # returns an array of the object's syblings, excluding itself
+        # returns an array of the object's siblings, excluding itself
         #
         #   return is cached
-        #   use syblings(true) to force a reload
-        def syblings(reload = false)
-          self_and_syblings(reload) - [self]
+        #   use siblings(true) to force a reload
+        def siblings(reload = false)
+          self_and_siblings(reload) - [self]
         end
 
         # returns object's position in the list
@@ -181,26 +181,26 @@ module WizardActsAsOrderedTree #:nodoc:
         #   shift_to()
         #     defaults to the bottom of the "roots" list
         #
-        #   shift_to(nil, new_sybling)
+        #   shift_to(nil, new_sibling)
         #     will move the item to "roots",
-        #     and position the item above new_sybling
+        #     and position the item above new_sibling
         #
         #   shift_to(new_parent)
         #     will move the item to the new parent,
         #     and position at the bottom of the parent's list
         #
-        #   shift_to(new_parent, new_sybling)
+        #   shift_to(new_parent, new_sibling)
         #     will move the item to the new parent,
-        #     and position the item above new_sybling
+        #     and position the item above new_sibling
         #
-        def shift_to(new_parent = nil, new_sybling = nil)
+        def shift_to(new_parent = nil, new_sibling = nil)
           if new_parent
             ok = new_parent.children(true) << self
           else
             ok = orphan
           end
-          if ok && new_sybling
-            ok = move_above(new_sybling) if self_and_syblings(true).include?(new_sybling)
+          if ok && new_sibling
+            ok = move_above(new_sibling) if self_and_siblings(true).include?(new_sibling)
           end
           return ok
         end
@@ -250,15 +250,15 @@ module WizardActsAsOrderedTree #:nodoc:
 
         ## List Update Methods
 
-        # moves the item above sybling in the list
+        # moves the item above sibling in the list
         #   defaults to the top of the list
-        def move_above(sybling = nil)
-          if sybling
-            return if (!self_and_syblings(true).include?(sybling) || (sybling == self))
-            if sybling.position_in_list > position_in_list
-              move_to(sybling.position_in_list - 1)
+        def move_above(sibling = nil)
+          if sibling
+            return if (!self_and_siblings(true).include?(sibling) || (sibling == self))
+            if sibling.position_in_list > position_in_list
+              move_to(sibling.position_in_list - 1)
             else
-              move_to(sybling.position_in_list)
+              move_to(sibling.position_in_list)
             end
           else
             move_to_top
@@ -279,14 +279,14 @@ module WizardActsAsOrderedTree #:nodoc:
 
         # swap with the node below self
         def move_lower
-          return if self == self_and_syblings(true).last
+          return if self == self_and_siblings(true).last
           move_to(position_in_list + 1)
         end
 
         # move to the bottom of the list
         def move_to_bottom
-          return if self == self_and_syblings(true).last
-          move_to(self_and_syblings.last.position_in_list)
+          return if self == self_and_siblings(true).last
+          move_to(self_and_siblings.last.position_in_list)
         end
 
         ## Destroy Methods
@@ -331,13 +331,13 @@ module WizardActsAsOrderedTree #:nodoc:
           end
 
           def add_to_list
-            new_position = position_in_list if (1..self_and_syblings(true).size).include?(position_in_list.to_i)
+            new_position = position_in_list if (1..self_and_siblings(true).size).include?(position_in_list.to_i)
             add_to_list_bottom
             move_to(new_position, true) if new_position
           end
 
           def add_to_list_bottom
-            self[order_column] = self_and_syblings(true).size + 1
+            self[order_column] = self_and_siblings(true).size + 1
           end
 
           def move_to(new_position, on_create = false)
@@ -403,14 +403,14 @@ module WizardActsAsOrderedTree #:nodoc:
               # i.e. don't assign the object a new position, then new_parent << obj
               # this will end up at the bottom of the list.
               #
-              if !self_and_syblings(true).include?(self)
+              if !self_and_siblings(true).include?(self)
                 add_to_list_bottom
                 @old_parent = self.class.find(self).parent || 'root'
               end
             end
 
             def validate_on_update #:nodoc:
-              if !self_and_syblings(true).include?(self)
+              if !self_and_siblings(true).include?(self)
                 if self.parent == self
                   errors.add_to_base("cannot be a parent to itself.")
                 elsif (self.parent && self.descendants(true).include?(self.parent))

@@ -1,11 +1,7 @@
 
 ENV["RAILS_ENV"] = "test"
-
-require File.dirname(__FILE__) + '/../../../../config/boot'
-
-require 'rubygems'
-require 'test/unit'
-require 'active_record'
+require File.dirname(__FILE__) + '/../../../../config/environment'
+require 'test_help'
 
 config = YAML::load(IO.read(File.dirname(__FILE__) + '/database.yml'))
 ActiveRecord::Base.logger = Logger.new(File.dirname(__FILE__) + '/debug.log')
@@ -17,3 +13,9 @@ ActiveRecord::Base.send(:include, WizardActsAsOrderedTree::Acts::OrderedTree)
 require File.dirname(__FILE__) + '/../lib/person'
 
 load(File.dirname(__FILE__) + '/schema.rb')
+
+class Test::Unit::TestCase
+  self.fixture_path = File.dirname(__FILE__) + '/fixtures'
+  self.use_transactional_fixtures = true
+  self.use_instantiated_fixtures  = false
+end
