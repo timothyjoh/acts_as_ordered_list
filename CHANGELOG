@@ -1,10 +1,14 @@
 
-v.1.1.1 - Wed May 16 2007
+v.1.2 - Wed May 17 2007
   - renamed syblings to siblings
   - renamed self_and_syblings to self_and_siblings
   - some other minor code changes
-  - tests re-written to use fixtures (much faster)
-    NOTE: I'm experiencing some strange issues with the test fixtures.
-          See the notes in the test for details.
-          This will not be merged with trunk
-          until I can resolve this.
+  - updated tests
+
+  Note:
+    I attempted to rewrite the tests using fixtures,
+    but some of the tests were failing.
+    I presume this is due to fixtures not supporting
+    nested transactions. The results of this effort
+    can be found in the fixtures_not_working/ branch.
+

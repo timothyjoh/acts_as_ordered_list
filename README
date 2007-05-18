@@ -1,7 +1,7 @@
 = ActsAsOrderedTree
-  v.1.1.1
+  v.1.2
                                  +----+-----------+----------+---------+
-  node_1                         | id | parent_id | position | node    |
+  node_1                         | id | parent_id | position | name    |
     \_ node_2                    +----+-----------+----------+---------+
     \_ node_3                    |  1 |         0 |        1 | Node_1  |
     |    \_ node_4               |  2 |         1 |        1 | Node_2  |
@@ -116,7 +116,7 @@
 
 = License
 
-Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
+Copyright (c) 2006,2007 Brian D. Burns <wizard.rb@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

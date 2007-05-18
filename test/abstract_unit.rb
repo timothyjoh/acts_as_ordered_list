@@ -13,9 +13,3 @@ ActiveRecord::Base.send(:include, WizardActsAsOrderedTree::Acts::OrderedTree)
 require File.dirname(__FILE__) + '/../lib/person'
 
 load(File.dirname(__FILE__) + '/schema.rb')
-
-class Test::Unit::TestCase
-  self.fixture_path = File.dirname(__FILE__) + '/fixtures'
-  self.use_transactional_fixtures = true
-  self.use_instantiated_fixtures  = false
-end

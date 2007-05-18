@@ -1,4 +1,4 @@
-# Acts As Ordered Tree v.1.1.1
+# Acts As Ordered Tree v.1.2
 # Copyright (c) 2006 Brian D. Burns <wizard.rb@gmail.com>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
