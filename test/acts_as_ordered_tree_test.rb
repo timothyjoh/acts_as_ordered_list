@@ -389,10 +389,7 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     # look in the database and see that it is indeed 4.
     # ( more below in __method_2 )
     #
-    #people(:people_010).reload
-    #assert_equal 4, people(:people_010).position_in_list
-      #person_010 = Person.find_by_id(10)
-      #assert_equal 4, person_010.position_in_list
+    assert_equal 4, people(:people_010).position_in_list
     assert_equal 5, people(:people_011).position_in_list
   end
 
@@ -411,8 +408,13 @@ class ActsAsOrderedTreeTest < Test::Unit::TestCase
     #   person_005 is moving from 2 to 3 (but test says it's 4)
     #   person_010 is moving from 3 to 4 (but test says it's 5)
     #
-    #assert_equal 3 ,people(:people_005).position_in_list
-    #assert_equal 4, people(:people_010).position_in_list
+    assert_equal 3 ,people(:people_005).position_in_list
+    assert_equal 4, people(:people_010).position_in_list
+
+    # NOTE: this assertion will pass.
+    #       somehow, all items in the list are being shifted down "twice",
+    #       except for the bottom item.
+    #       It's as if the update_all method is being executed twice.
     assert_equal 5, people(:people_011).position_in_list
 
     #  person_003's children:
