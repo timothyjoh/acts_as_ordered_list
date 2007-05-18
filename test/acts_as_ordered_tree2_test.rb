@@ -4,6 +4,7 @@ require File.dirname(__FILE__) + '/abstract_unit'
 # /usr/bin/ruby -Ilib:lib "/usr/lib/ruby/gems/1.8/gems/rake-0.7.3/lib/rake/rake_test_loader.rb" "test/acts_as_ordered_tree2_test.rb"
 #
 # As soon as 'fixtures' are used, the tests fail.
+# - This may be a nested transactions issue.
 #
 class ActsAsOrderedTree2Test < Test::Unit::TestCase
   #fixtures :people
